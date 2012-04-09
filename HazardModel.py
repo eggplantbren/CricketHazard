@@ -9,7 +9,7 @@ class HazardModel:
 	"""
 
 	# A static variable, the x-axis
-	x = np.arange(0, 500)
+	x = np.arange(0, 1000)
 
 	# Hyperparameters
 	logMuMin = np.log(1.0)
