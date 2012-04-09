@@ -25,9 +25,14 @@ if __name__ == '__main__':
 	Do the inference for a single player.
 	"""
 
-	filename = "fake_data.txt"
+	# Load data from file
+	#filename = "fake_data.txt"
+	#data = Career()
+	#data.load(filename)
+	
+	# Pull data from web
 	data = Career()
-	data.load(filename)
+	data.fetch() # By default, fetchs Watto's ODI record.
 
 	# MCMC parameters
 	numParticles = 10
