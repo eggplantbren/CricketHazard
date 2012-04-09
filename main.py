@@ -9,15 +9,22 @@ def logLikelihood(career, model):
 	"""
 	Evaluate log p(career|hazard model)
 	"""
-	logL = 0.0
 
+	"""
 	# Slow, loopy method
+	logL = 0.0
 	for i in xrange(0, career.scores.size):
 		if career.outFlags[i]:
 			logL += model.logf[career.scores[i]]
 		else:
 			logL += model.logG[career.scores[i]]
+	"""
 
+	# Vectorised - faster
+	logLEachInnings = np.zeros(career.scores.size)
+	logLEachInnings[career.outFlags] = model.logf[career.scores]
+	logLEachInnings[np.logical_not(career.outFlags)] = model.logG[career.scores]
+	logL = logLEachInnings.sum()
 	return logL
 
 if __name__ == '__main__':
