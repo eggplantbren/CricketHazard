@@ -1,29 +1,30 @@
 import numpy as np
 
-"""
-An object of this class is a single player's career.
-Just a chronological list of integer scores and 
-boolean flags for out (True)/not out (False).
-"""
 class Career:
 	"""
-	Constructor: just sets scores and outFlags to
-	empty arrays.
+	An object of this class is a single player's career.
+	Just a chronological list of integer scores and 
+	boolean flags for out (True)/not out (False).
 	"""
+
 	def __init__(self):
+		"""
+		Constructor: just sets scores and outFlags to
+		empty arrays.
+		"""
 		self.clear()
 	
-	"""
-	Set scores and outFlags to empty arrays.
-	"""
 	def clear(self):
+		"""
+		Set scores and outFlags to empty arrays.
+		"""
 		self.scores = np.array([])
 		self.outFlags = np.array([])
 
-	"""
-	Load from file. Parses * notation for not-outs.
-	"""
 	def load(self, filename):
+		"""
+		Load from file. Parses * notation for not-outs.
+		"""
 		scores = []
 		outFlags = []
 		f = open(filename, "r")
@@ -40,27 +41,54 @@ class Career:
 		self.scores = np.array(scores)
 		self.outFlags = np.array(outFlags)
 
-	"""
-	Turn a single innings to a string.
-	"""
 	def toString(self, i):
-		result = `self.scores[i]`
+		"""
+		Turn a single innings to a string.
+		"""
+		result = str(self.scores[i])
 		if not self.outFlags[i]:
 			result += '*'
 		return result
 
-	"""
-	Convert a whole career to a string.
-	"""
 	def __str__(self):
+		"""
+		Convert a whole career to a string.
+		"""
 		return ''.join([self.toString(i) + ' ' for i in xrange(0, self.scores.size)])
 
 
-"""
-Simple main, for testing
-"""
+class Population:
+	"""
+	Simply a list of Careers
+	"""
+
+	def __init__(self):
+		"""
+		Constructor: empty list
+		"""
+		self.careers = []
+
+	def load(self, filenames):
+		"""
+		Load a bunch of careers from the specified files.
+		`filenames`: list of strings
+		"""
+		for filename in filenames:
+			c = Career()
+			c.load(filename)
+			self.careers.append(c)
+
+	def __str__(self):
+		"""
+		Output one player's career per line.
+		"""
+		return ''.join([str(career) + '\n' for career in self.careers])
+
 if __name__ == '__main__':
-	data = Career()
-	data.load("fake_data.txt")
+	"""
+	Simple main, for testing
+	"""
+	data = Population()
+	data.load(["fake_data.txt"])
 	print(data)
 
