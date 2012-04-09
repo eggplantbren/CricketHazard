@@ -40,7 +40,6 @@ if __name__ == "__main__":
 	#data.load(filename)
 	
 	# Pull data from web
-	fetch_data
 	data = Career()
 	data.fetch() # By default, fetchs Watto's ODI record.
 
