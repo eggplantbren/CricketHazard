@@ -7,6 +7,30 @@
 \renewcommand{\textfraction}{0.1}
 \parindent=0cm
 
+
+% Stolen from http://stackoverflow.com/questions/586572/make-code-in-latex-look-nice
+\usepackage{color}
+\usepackage{listings}
+\lstset{ %
+language=Python,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,           % adds a frame around the code
+tabsize=2,          % sets default tabsize to 2 spaces
+captionpos=b,           % sets the caption-position to bottom
+breaklines=true,        % sets automatic line breaking
+breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
+escapeinside={\%*}{*)}          % if you want to add a comment within your code
+}
+
+
 \title{Notes on Cricket Hazard Functions}
 \author{Brendon J. Brewer}
 
@@ -31,7 +55,7 @@ F(x) = P(X \leq x) = \sum_{i=0}^x f(x)
 \end{eqnarray}
 The cumulative probability distribution (reversed definition):
 \begin{eqnarray}
-G(x) = P(X \geq x) = \sum_{i=x}^\infty f(x)
+G(x) = P(X \geq x)
 \end{eqnarray}
 This reversed definition is great because it gives the likelihood function
 for not out innings.
@@ -39,10 +63,43 @@ The Hazard function:
 \begin{eqnarray}
 H(x) = P(X = x | X \geq x) = \frac{f(x)}{G(x)}
 \end{eqnarray}
-The effective average:
+
+\section{Construction from Effective Average}
+The effective average measures how good a player is as a function
+of their current score. It is related to the hazard function:
 \begin{eqnarray}
 \mu(x) = \frac{1}{H(x)} - 1
 \end{eqnarray}
+
+If $\mu(x)$ is specified and we want to construct everything else,
+the formulae are:
+
+\begin{eqnarray}
+H(x) = \frac{1}{\mu(x) + 1}
+\end{eqnarray}
+
+\begin{eqnarray}
+G(x) &=& G(x-1)\left(1 - H(x-1)\right) \\
+&=& G(x-1)\left(\frac{\mu(x-1)}{\mu(x-1) + 1}\right)
+\end{eqnarray}
+with initial condition $G(0) = 1$. In the code, this is implemented
+by:
+\begin{lstlisting}
+# Effective average
+self.mu = self.mu1 + (self.mu0 - self.mu1)*\
+np.exp(-HazardModel.x/self.L)
+# Log of reversed cumulative distribution
+self.logG = np.zeros(HazardModel.x.shape)
+self.logG[1:] = np.cumsum(np.log(self.mu[0:-1])\
+		 - np.log(self.mu[0:-1] + 1.0))
+# Log of probability distribution
+self.logf = self.logG - np.log(self.mu + 1.0)
+\end{lstlisting}
+
+\begin{eqnarray}
+G(x) = G(x-1)\left(1 - H(x-1)\right)
+\end{eqnarray}
+
 
 \section{Model for Getting Your Eye In}
 The effective average parameterisation. This is different from the original
