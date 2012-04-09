@@ -3,7 +3,7 @@ import numpy as np
 class Career:
 	"""
 	An object of this class is a single player's career.
-	Just a chronological list of integer scores and 
+	Just a chronological array of integer scores and 
 	boolean flags for out (True)/not out (False).
 	"""
 
