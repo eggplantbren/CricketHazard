@@ -36,10 +36,15 @@ if __name__ == "__main__":
 	data = Career()
 	data.load(filename)
 
-	# MCMC parameters
+	# MCMC parameters. One step = one likelihood evaluation
 	numParticles = 10
 	steps = 1000000
 	skip = 100
+
+	# Keep track of acceptance rates
+	accepts = np.array([0, 0]) # Acceptances for basic Metropolis and 
+				   # stretch moves respectively
+	tries = np.array([0, 0])   # As above, number of attempts
 
 	# Array for keeping results
 	keep = np.zeros((steps/skip, 5))
@@ -65,17 +70,14 @@ if __name__ == "__main__":
 		outputFile.write(label + ", ")
 	outputFile.write("\n")
 
-	#plt.figure()
 	plt.ion()
 	plt.subplots(3, 2, figsize=(12, 12))
-	#plt.hold(False)
 	for i in xrange(0, steps):
 		# Choose a particle for plotting/updating
 		which = rng.randint(numParticles)
 
 		# Plotting/saving
 		if i%skip == 0:
-			plt.clf()
 			# Save a particle to the keep array
 			keep[i/skip, :] = np.array([particles[which].mu0\
 		, particles[which].mu1, particles[which].L\
@@ -89,19 +91,22 @@ if __name__ == "__main__":
 			outputFile.flush()
 
 			# Plot last 75% of keep array
-			# (removing burn-in in an adhoc way)
+			# (removing burn-in in an ad-hoc way)
 			for k in xrange(0, len(labels)):
 				plt.subplot(3,2,k+1)
+				plt.hold(False)
 				start = int(0.25*(i/skip+1))
 				plt.plot(keep[start:(i/skip+1), k])
 				plt.xlabel("Iteration")
 				plt.ylabel(labels[k])
 			plt.draw()
+			print("Acceptance fractions = "\
+			+ str(np.float64(accepts)/(tries+1)))
 
 		# Update the particle
 		proposal = copy.deepcopy(particles[which])
-
-		if rng.rand() < 0.5:
+		method = rng.randint(2)
+		if method == 0:
 			# Plain metropolis
 			logH = proposal.proposal()
 		else:
@@ -110,6 +115,7 @@ if __name__ == "__main__":
 			while other == which:
 				other = rng.randint(numParticles)
 			logH = proposal.proposal(particles[other])
+		tries[method] += 1
 
 		loglProposal = logLikelihood(data, proposal)
 
@@ -120,6 +126,7 @@ if __name__ == "__main__":
 		if rng.rand() <= np.exp(logA):
 			particles[which] = proposal
 			logLikelihoods[which] = loglProposal
+			accepts[method] += 1
 
 	outputFile.close()
 
