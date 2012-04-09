@@ -32,7 +32,7 @@ if __name__ == '__main__':
 	Do the inference for a single player.
 	"""
 
-	filename = "fake_data.txt"
+	filename = "Data/fake_data.txt"
 	data = Career()
 	data.load(filename)
 
