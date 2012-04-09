@@ -32,9 +32,17 @@ if __name__ == "__main__":
 	Do the inference for a single player.
 	"""
 
-	filename = "Data/lara.txt"
+
+	# Load data from file
+	#filename = "Data/lara.txt"
+	#filename = "fake_data.txt"
+	#data = Career()
+	#data.load(filename)
+	
+	# Pull data from web
+	fetch_data
 	data = Career()
-	data.load(filename)
+	data.fetch() # By default, fetchs Watto's ODI record.
 
 	# MCMC parameters. One step = one likelihood evaluation
 	numParticles = 10

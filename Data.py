@@ -41,6 +41,36 @@ class Career:
 		self.scores = np.array(scores)
 		self.outFlags = np.array(outFlags)
 
+	def fetch(self,playerID=8180):
+		"""Fetch a player's ODI batting record from ESPN and
+		parse it into the Career instance.
+
+		Defaults to Shane 'Watto' Watson."""
+
+		from bs4 import BeautifulSoup
+		from urllib2 import urlopen
+
+		# Fetch webpage data
+		pre = 'http://stats.espncricinfo.com/ci/engine/player/'
+		post = '.html?class=2;template=results;type=batting;view=innings'
+		webstr = pre + str(playerID) + post
+		soup = BeautifulSoup(urlopen(webstr))
+
+		# Get full innings list, including DNBs
+		innings_table = soup('table','engineTable')[3] # Get innings table
+		innings_rows = innings_table('tr')[1:] # Cut header row
+		innings_list = [innings('td')[0].text for innings in innings_rows]
+
+		# Chop DNBs
+		batting_list = [score for score in innings_list if 'DNB' not in score] # :-)
+
+		# Find not-outs
+		self.outFlags = np.array( ['*' not in s for s in batting_list] )
+
+		# Strip '*' from not out scores and set score list
+		self.scores = np.array( [int(score.strip('*')) for score in batting_list] )
+		return
+
 	def toString(self, i):
 		"""
 		Turn a single innings to a string.
@@ -83,6 +113,15 @@ class Population:
 		Output one player's career per line.
 		"""
 		return ''.join([str(career) + '\n' for career in self.careers])
+
+def get_playerID(name='Ponting'):
+	"""Search ESPN database by name and return possible
+	player IDs.
+	
+	This routine is not implemented at present, so
+	one must manually search the ESPN website and input
+	the ID to Career.fetch by hand."""
+	return
 
 if __name__ == '__main__':
 	"""
