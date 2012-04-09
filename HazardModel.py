@@ -36,8 +36,6 @@ class HazardModel:
 				 + HazardModel.logMuRange*rng.rand())
 		self.mu1 = np.exp(HazardModel.logMuMin\
 				 + HazardModel.logMuRange*rng.rand())
-		if self.mu1 < self.mu0:
-			self.mu0, self.mu1 = self.mu1, self.mu0
 		self.L = np.exp(HazardModel.logLMin\
 				 + HazardModel.logLRange*rng.rand())
 		self.compute()
@@ -52,7 +50,7 @@ class HazardModel:
 		# Log of reversed cumulative distribution
 		self.logG = np.zeros(HazardModel.x.shape)
 		self.logG[1:] = np.cumsum(np.log(self.mu[0:-1])\
-				 - np.log(self.mu[0:-1] + 1.0))
+			 - np.log(self.mu[0:-1] + 1.0))
 		# Log of probability distribution
 		self.logf = self.logG - np.log(self.mu + 1.0)
 		# Numerically compute actual average
@@ -99,47 +97,77 @@ class HazardModel:
 			
 				
 		else:
+			# Slight inefficiency (not cached), shouldn't matter
+			logp_old = self.logPrior
+		
 			# Stretch move
-			print("Stretch move not implemented yet.")
-			
+			Z = 0.5*(1.0 + rng.rand())**2
+			self.mu0 = Z*self.mu0 + (1.0 - Z)*other.mu0
+			self.mu1 = Z*self.mu1 + (1.0 - Z)*other.mu1
+			self.L = Z*self.L + (1.0 - Z)*other.L
 
-		if self.mu1 < self.mu0:
-			self.mu0, self.mu1 = self.mu1, self.mu0
-		self.compute()
+			logp_new = self.logPrior
+			if logp_new == -np.inf:
+				logH = -np.inf
+			else:
+				logH += 2*np.log(Z) # (N-1)logZ
+				logH += logp_new - logp_old
+
+		if logH != -np.inf:
+			self.compute()
 		return logH
 
+	@property
 	def logPrior(self):
 		""" Evaluate the prior density at the current point.
 		Stretch moves need this."""
-		if self.mu0 < HazardModel.logMuMin\
-		or self.mu0 > HazardModel.logMuMax\
-		or self.mu1 < HazardModel.logMuMin\
-		or self.mu1 > HazardModel.logMuMax\
-		or self.L   < HazardModel.logLMin \
-		or self.L   > HazardModel.logLMax:
+		if self.mu0 < np.exp(HazardModel.logMuMin)\
+		or self.mu0 > np.exp(HazardModel.logMuMax)\
+		or self.mu1 < np.exp(HazardModel.logMuMin)\
+		or self.mu1 > np.exp(HazardModel.logMuMax)\
+		or self.L   < np.exp(HazardModel.logLMin) \
+		or self.L   > np.exp(HazardModel.logLMax):
 			return -np.inf
 		return 0.0
 
 	def __str__(self):
+		"""
+		Turns the parameters into a string.
+		"""
 		return str(self.mu0) + " " + str(self.mu1) + " " + str(self.L)
 		
 
 if __name__ == '__main__':
 	"""
 	A simple main for testing
+	Explores the prior via stretch moves
 	"""
 	import matplotlib.pyplot as plt
 	import time
+	import copy
 
-	m = HazardModel()
-	m.fromPrior()
+	# Create particles
+	numParticles = 10
+	particles = []
+	for i in xrange(0, numParticles):
+		m = HazardModel()
+		m.fromPrior()
+		particles.append(m)
 
 	plt.ion()
 	plt.hold(False)
 	for i in xrange(0, 100):
-		m.proposal()
+		# Update one using stretch move
+		which = rng.randint(numParticles)
+		other = rng.randint(numParticles)
+		while which==other:
+			other = rng.randint(numParticles)
+		proposal = copy.deepcopy(particles[which])
+		logA = proposal.proposal(particles[other])
+		if rng.rand() <= np.exp(logA):
+			particles[which] = proposal
 
-		plt.plot(HazardModel.x, m.mu)
+		plt.plot(HazardModel.x, particles[which].mu)
 		plt.title("Prior over a player's effective average curve")
 		plt.axis([0, 100, 0, 100])
 		plt.xlabel('Current Score')
