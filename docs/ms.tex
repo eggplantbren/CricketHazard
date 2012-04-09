@@ -18,7 +18,44 @@ For the basic idea and an initial study, see \citet{2008arXiv0801.4408B}.
 For this software, I am using a different hazard function with more
 easily interpreted parameters.
 
-Consider a score $X \in \{0, 1, 2, ... \}$.
+Consider a score $X \in \{0, 1, 2, ... \}$. I will now define various
+quantities:
+
+The probability distribution:
+\begin{eqnarray}
+f(x) = P(X = x)
+\end{eqnarray}
+The cumulative probability distribution (standard definition):
+\begin{eqnarray}
+F(x) = P(X \leq x) = \sum_{i=0}^x f(x)
+\end{eqnarray}
+The cumulative probability distribution (reversed definition):
+\begin{eqnarray}
+G(x) = P(X \geq x) = \sum_{i=x}^\infty f(x)
+\end{eqnarray}
+This reversed definition is great because it gives the likelihood function
+for not out innings.
+The Hazard function:
+\begin{eqnarray}
+H(x) = P(X = x | X \geq x) = \frac{f(x)}{G(x)}
+\end{eqnarray}
+The effective average:
+\begin{eqnarray}
+\mu(x) = \frac{1}{H(x)} - 1
+\end{eqnarray}
+
+\section{Model for Getting Your Eye In}
+The effective average parameterisation. This is different from the original
+paper. Parameters are $\mu_0$ (how good is the player when they first come
+in?), $\mu_1$ (how good are they when they're warmed up?),
+and $L$ (how long does it take (in terms of runs) for them to warm up?)
+\begin{eqnarray}
+\mu(x; \mu_0, \mu_1) = \mu_1 + \left(\mu_0 - \mu_1\right)\exp\left(-\frac{x}{L}\right)
+\end{eqnarray}
+
+
+
+
 
 \begin{thebibliography}{99}
 \bibitem[Brewer(2008)]{2008arXiv0801.4408B} Brewer, B.~J.\ 2008.\ Getting 
