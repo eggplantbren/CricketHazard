@@ -27,7 +27,7 @@ def logLikelihood(career, model):
 	logL = logLEachInnings.sum()
 	return logL
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	"""
 	Do the inference for a single player.
 	"""
@@ -59,6 +59,11 @@ if __name__ == '__main__':
 
 	# Open output file
 	outputFile = open("sample.txt", mode="w")
+	# Write header
+	outputFile.write("# ")
+	for label in labels:
+		outputFile.write(label + ", ")
+	outputFile.write("\n")
 
 	#plt.figure()
 	plt.ion()
@@ -76,7 +81,11 @@ if __name__ == '__main__':
 		, particles[which].mu1, particles[which].L\
 		, particles[which].average\
 		, logLikelihoods[which]])
-			outputFile.write(str(particles[which]) + '\n')
+			line = str(keep[i/skip, :])
+			line = line.replace("[", "")
+			line = line.replace("]", "")
+			line = line.replace("\n", "")
+			outputFile.write(line + "\n")
 			outputFile.flush()
 
 			# Plot last 75% of keep array
@@ -85,7 +94,7 @@ if __name__ == '__main__':
 				plt.subplot(3,2,k+1)
 				start = int(0.25*(i/skip+1))
 				plt.plot(keep[start:(i/skip+1), k])
-				plt.xlabel('Iteration')
+				plt.xlabel("Iteration")
 				plt.ylabel(labels[k])
 			plt.draw()
 
