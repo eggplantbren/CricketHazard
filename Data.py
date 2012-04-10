@@ -114,14 +114,33 @@ class Population:
 		"""
 		return ''.join([str(career) + '\n' for career in self.careers])
 
-def get_playerID(name='Ponting'):
+def search_playerID(name='Ponting',output=True,returndict=False):
 	"""Search ESPN database by name and return possible
 	player IDs.
+	"""
+	from bs4 import BeautifulSoup
+	from urllib2 import urlopen
 	
-	This routine is not implemented at present, so
-	one must manually search the ESPN website and input
-	the ID to Career.fetch by hand."""
-	return
+	# Fetch result from web
+	pre = 'http://stats.espncricinfo.com/ci/engine/stats/analysis.html?search='
+	search_str = pre + name
+	soup = BeautifulSoup( urlopen(search_str) )
+
+	# Parse result data into names and IDs
+	searchdiv = soup('div',id='gurusearch_player')
+	player_entries = searchdiv[0]('tr')[0::2]
+	names = [' '.join([str(s.text) for s in entry('span')]) for entry in player_entries]
+	ids = [int(entry('a')[0].attrs['href'].split('.')[0].split('/')[-1]) for entry in player_entries]
+	
+	# Print formatted list
+	if output:
+		print "{0:>6} {1:<25}".format("ID","Name")
+		for i in range(len(names)):
+			print "{0:>6} {1:<25}".format(ids[i],names[i])
+	if returndict:
+		return dict(zip(ids,names))
+	else:
+		return
 
 if __name__ == '__main__':
 	"""
