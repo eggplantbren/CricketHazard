@@ -71,7 +71,7 @@ if __name__ == "__main__":
 	outputFile.write("\n")
 
 	plt.ion()
-	plt.subplots(3, 2, figsize=(12, 12))
+	plt.subplots(3, 2, figsize=(8, 8))
 	for i in xrange(0, steps):
 		# Choose a particle for plotting/updating
 		which = rng.randint(numParticles)
