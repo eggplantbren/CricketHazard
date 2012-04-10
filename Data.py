@@ -42,7 +42,7 @@ class Career:
 		self.outFlags = np.array(outFlags)
 
 	def fetch(self,playerID=8180,record_class=1):
-		"""Fetch a player's ODI batting record from ESPN and
+		"""Fetch a player's batting record from ESPN and
 		parse it into the Career instance.
 
 		Input: playerID on cricinfo (can be found with search_playerID)
@@ -93,6 +93,7 @@ class Career:
 
 		# Chop DNBs
 		batting_list = [score for score in innings_list if 'DNB' not in score] # :-)
+		# I'm loving the awesome list comprehension there^ :-) - BJB
 
 		# Find not-outs
 		self.outFlags = np.array( ['*' not in s for s in batting_list] )
