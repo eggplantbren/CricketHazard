@@ -41,7 +41,8 @@ if __name__ == "__main__":
 	
 	# Pull data from web
 	data = Career()
-	data.fetch() # By default, fetchs Watto's ODI record.
+	data.load("Data/waugh_s.txt")
+#	data.fetch() # By default, fetchs Watto's ODI record.
 
 	# MCMC parameters. One step = one likelihood evaluation
 	numParticles = 10
@@ -78,7 +79,7 @@ if __name__ == "__main__":
 	outputFile.write("\n")
 
 	plt.ion()
-	plt.subplots(3, 2, figsize=(12, 12))
+	plt.subplots(3, 2, figsize=(8, 8))
 	for i in xrange(0, steps):
 		# Choose a particle for plotting/updating
 		which = rng.randint(numParticles)
