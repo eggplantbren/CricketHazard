@@ -47,8 +47,12 @@ class Career:
 
 		Defaults to Shane 'Watto' Watson."""
 
-		from bs4 import BeautifulSoup
-		from urllib2 import urlopen
+		try:
+			from bs4 import BeautifulSoup
+			from urllib2 import urlopen
+		except ImportError:
+			print("You require beautifulsoup4 to do this.")
+			return
 
 		# Fetch webpage data
 		pre = 'http://stats.espncricinfo.com/ci/engine/player/'
