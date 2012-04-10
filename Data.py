@@ -41,11 +41,14 @@ class Career:
 		self.scores = np.array(scores)
 		self.outFlags = np.array(outFlags)
 
-	def fetch(self,playerID=8180):
+	def fetch(self,playerID=8180,record_class=1):
 		"""Fetch a player's ODI batting record from ESPN and
 		parse it into the Career instance.
 
-		Defaults to Shane 'Watto' Watson."""
+		Input: playerID on cricinfo (can be found with search_playerID)
+		       record_class: Test (default), ODI, T20, combined
+
+		Defaults to the Test record of Shane 'Watto' Watson."""
 
 		try:
 			from bs4 import BeautifulSoup
@@ -54,10 +57,33 @@ class Career:
 			print("You require beautifulsoup4 to do this.")
 			return
 
+		# Select class of batting data
+		if type(record_class)==str:
+			if record_class.lower() == 'test':
+				record_class = 1
+			elif record_class.lower() == 'odi':
+				record_class = 2
+			elif record_class.lower() == 't20':
+				record_class = 3
+			elif record_class.lower() == 'all':
+				record_class = 11
+			else:
+				print "Can't parse batting record class. Defaulting to Test."
+				record_class = 1
+		elif type(record_class)==int:
+			if record_class not in [1,2,3,11]:
+				print "Can't parse batting record class. Defaulting to Test."
+				record_class = 1
+		else:
+			print "Can't parse batting record class. Defaulting to Test."
+			record_class = 1
+
+
 		# Fetch webpage data
 		pre = 'http://stats.espncricinfo.com/ci/engine/player/'
-		post = '.html?class=2;template=results;type=batting;view=innings'
-		webstr = pre + str(playerID) + post
+		post1 = '.html?class='
+		post2 = ';template=results;type=batting;view=innings'
+		webstr = pre + str(playerID) + post1 + str(record_class) + post2
 		soup = BeautifulSoup(urlopen(webstr))
 
 		# Get full innings list, including DNBs
