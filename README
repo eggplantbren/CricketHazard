@@ -4,6 +4,13 @@ Version 3 (see the LICENCE file).
 
 If you find this useful, please cite the following paper:
 
-Brewer, B. J. 2008. Getting Your Eye In: A Bayesian Analysis of Early Dismissals in Cricket. ArXiv 
-e-print, arXiv:0801.4408.
+Brewer, B. J. 2008. Getting Your Eye In: A Bayesian Analysis of Early Dismissals in Cricket. ArXiv e-print, arXiv:0801.4408.
+
+Note that the model implemented in this code is not the same as the model in that paper, but it is similar in spirit.
+
+Dependencies (and the version I used for development)
+
+Python		2.7.2
+Numpy		1.6.1
+Matplotlib	1.1.0
 
