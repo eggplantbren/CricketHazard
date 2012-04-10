@@ -122,9 +122,13 @@ def search_playerID(name='Ponting',output=True,returndict=False):
 	"""Search ESPN database by name and return possible
 	player IDs.
 	"""
-	from bs4 import BeautifulSoup
-	from urllib2 import urlopen
-	
+	try:
+		from bs4 import BeautifulSoup
+		from urllib2 import urlopen
+	except ImportError:
+		print("You require beautifulsoup4 to do this.")
+		return
+		
 	# Fetch result from web
 	pre = 'http://stats.espncricinfo.com/ci/engine/stats/analysis.html?search='
 	search_str = pre + name
