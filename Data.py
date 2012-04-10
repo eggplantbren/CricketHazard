@@ -74,6 +74,10 @@ class Career:
 			if record_class not in [1,2,3,11]:
 				print "Can't parse batting record class. Defaulting to Test."
 				record_class = 1
+		else:
+			print "Can't parse batting record class. Defaulting to Test."
+			record_class = 1
+
 
 		# Fetch webpage data
 		pre = 'http://stats.espncricinfo.com/ci/engine/player/'
