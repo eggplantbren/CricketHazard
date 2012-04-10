@@ -13,4 +13,9 @@ Dependencies (and the version I used for development)
 Python		2.7.2
 Numpy		1.6.1
 Matplotlib	1.1.0
+BeautifulSoup4 and Html5lib (optional - for fetching data from web)
+
+CONTRIBUTORS:
+
+J. Berian James (UC Berkeley)
 
