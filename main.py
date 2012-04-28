@@ -33,18 +33,17 @@ if __name__ == "__main__":
 	"""
 
 	data = Career()
-	data.load("Data/waugh_s.txt")	# Load data from file
+	data.load("Data/srt.txt")	# Load data from file
 #	data.fetch() # By default, fetchs Watto's ODI record.
 
 	# MCMC parameters. One step = one likelihood evaluation
-	numParticles = 10
+	numParticles = 1
 	steps = 1000000
 	skip = 100
 
 	# Keep track of acceptance rates
-	accepts = np.array([0, 0]) # Acceptances for basic Metropolis and 
-				   # stretch moves respectively
-	tries = np.array([0, 0])   # As above, number of attempts
+	accepts = 0 # Acceptances
+	tries = 0   # As above, number of attempts
 
 	# Array for keeping results
 	keep = np.zeros((steps/skip, 5))
@@ -100,23 +99,14 @@ if __name__ == "__main__":
 				plt.xlabel("Iteration")
 				plt.ylabel(labels[k])
 			plt.draw()
-			print("Acceptance fractions = "\
-			+ str(np.float64(accepts)/(tries+1)))
+			print("Acceptance fraction = "\
+			+ str(np.float64(accepts)/tries))
 
 		# Update the particle
 		proposal = copy.deepcopy(particles[which])
-		method = rng.randint(2)
-		if method == 0:
-			# Plain metropolis
-			logH = proposal.proposal()
-		else:
-			# Stretch move
-			other = rng.randint(numParticles)
-			while other == which:
-				other = rng.randint(numParticles)
-			logH = proposal.proposal(particles[other])
-		tries[method] += 1
-
+		# Plain metropolis
+		logH = proposal.proposal()
+		tries += 1
 		loglProposal = logLikelihood(data, proposal)
 
 		# Acceptance probability
@@ -126,7 +116,7 @@ if __name__ == "__main__":
 		if rng.rand() <= np.exp(logA):
 			particles[which] = proposal
 			logLikelihoods[which] = loglProposal
-			accepts[method] += 1
+			accepts += 1
 
 	outputFile.close()
 
