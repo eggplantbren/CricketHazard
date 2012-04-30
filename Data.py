@@ -94,6 +94,8 @@ class Career:
 		# Chop DNBs
 		batting_list = [score for score in innings_list if 'DNB' not in score] # :-)
 		# I'm loving the awesome list comprehension there^ :-) - BJB
+		# Chop 'absent'
+		batting_list = [score for score in batting_list if 'absent' not in score]
 
 		# Find not-outs
 		self.outFlags = np.array( ['*' not in s for s in batting_list] )
