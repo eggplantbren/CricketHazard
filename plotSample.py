@@ -18,8 +18,8 @@ plt.xlabel('$\mu_0$', fontsize=20)
 plt.ylabel('$\mu_1$', fontsize=20)
 
 plt.figure()
-plt.hist(sample[:,2], 30)
-plt.xlabel('Transition Timescale $L$', fontsize=16)
+plt.hist(np.log10(sample[:,2]), 30)
+plt.xlabel('log$_{10}$ of Transition Timescale $L$', fontsize=16)
 plt.ylabel('Posterior Probability', fontsize=16)
 
 plt.figure()
