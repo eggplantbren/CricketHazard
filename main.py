@@ -22,10 +22,11 @@ def logLikelihood(career, model):
 
 	# Vectorised - faster
 	logLEachInnings = np.zeros(career.scores.size)
-	logLEachInnings[career.outFlags] = model.logf[career.scores]
-	logLEachInnings[np.logical_not(career.outFlags)] = model.logG[career.scores]
+	logLEachInnings[career.outFlags] = model.logf[career.scores[career.outFlags]]
+	logLEachInnings[np.logical_not(career.outFlags)] = model.logG[career.scores[np.logical_not(career.outFlags)]]
 	logL = logLEachInnings.sum()
 	return logL
+
 
 if __name__ == "__main__":
 	"""
