@@ -13,10 +13,10 @@ class HazardModel:
 
 	# Hyperparameters
 	logMuMin = np.log(1.0)
-	logMuMax = np.log(1E2)
+	logMuMax = np.log(2E2)
 	logMuRange = logMuMax - logMuMin
 	logLMin = np.log(0.1)
-	logLMax = np.log(1E2)
+	logLMax = np.log(2E2)
 	logLRange = logLMax - logLMin
 
 	def __init__(self, mu0=40.0, mu1=40.0, L=5.0):
