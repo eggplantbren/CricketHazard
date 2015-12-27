@@ -16,7 +16,7 @@ class HazardModel:
 	logMuMax = np.log(2E2)
 	logMuRange = logMuMax - logMuMin
 	logLMin = np.log(0.1)
-	logLMax = np.log(2E2)
+	logLMax = np.log(50.0)
 	logLRange = logLMax - logLMin
 
 	def __init__(self, mu0=40.0, mu1=40.0, L=5.0):
@@ -39,6 +39,15 @@ class HazardModel:
 		self.L = np.exp(HazardModel.logLMin\
 				 + HazardModel.logLRange*rng.rand())
 		self.compute()
+
+	def logPrior(self):
+		logP = 0.
+
+		# Lognormal priors
+		logP += -np.log(self.mu0) - 0.5*((np.log(self.mu0) - np.log(30.))/0.5)**2
+		logP += -np.log(self.mu1) - 0.5*((np.log(self.mu1) - np.log(30.))/0.5)**2
+
+		return logP
 
 	def compute(self):
 		"""
@@ -65,7 +74,8 @@ class HazardModel:
 		Optional argument: another object, to do a stretch move
 		"""
 
-		logH = 0.0
+		logH = -self.logPrior()
+
 		# Standard Metropolis proposal
 		which = rng.randint(3)
 		if which==0:
@@ -93,6 +103,8 @@ class HazardModel:
 			self.mu1 = param
 		else:
 			self.L = param
+
+		logH += self.logPrior()
 		
 		self.compute()
 		return logH

@@ -34,7 +34,7 @@ if __name__ == "__main__":
 	"""
 
 	data = Career()
-	data.load("Data/srt.txt")	# Load data from file
+	data.load("Data/voges.txt")	# Load data from file
 #	data.fetch() # By default, fetchs Watto's ODI record.
 
 	# MCMC parameters. One step = one likelihood evaluation
