@@ -44,8 +44,8 @@ class HazardModel:
 		logP = 0.
 
 		# Lognormal priors
-		logP += -np.log(self.mu0) - 0.5*((np.log(self.mu0) - np.log(30.))/0.5)**2
-		logP += -np.log(self.mu1) - 0.5*((np.log(self.mu1) - np.log(30.))/0.5)**2
+		logP += -np.log(self.mu0) - 0.5*((np.log(self.mu0) - np.log(30.))/0.4)**2
+		logP += -np.log(self.mu1) - 0.5*((np.log(self.mu1) - np.log(30.))/0.4)**2
 
 		return logP
 
